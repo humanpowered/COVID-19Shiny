@@ -79,39 +79,39 @@ data4 <- bind_rows(casesL, deathsL)
 
 
 ################################# time series ----------------------------------------------
-dts <- data4
-dts$lookup <- paste(dts$`National/State/County`, dts$state, dts$County, dts$Metric, sep = "_")
-
-ts <- list()
-for(i in unique(dts$lookup)){
-  ts[[i]] <- ts(dts$Value[dts$lookup == i], frequency = 7)
-}
-
-seasons <- list()
-for(i in unique(dts$lookup)){
-  seasons[[i]]<- ets(ts[[i]]
-  )
-}
-
-seasls <- list()
-for(i in unique(dts$lookup)){
-  seasls[[i]] <- data.table(seasons[[i]]$fitted)
-  seasls[[i]]$Actual <- dts$Value[dts$lookup == i]
-  seasls[[i]]$Date <- dts$Date[dts$lookup == i]
-  seasls[[i]]$lookup <- dts$lookup[dts$lookup == i]
-}
-
-seas_table <- bind_rows(seasls[1:length(seasls)])
-seas_table$V1 <- round(seas_table$V1, 0)
-seas_table2 <- left_join(seas_table, dts[, c('Date', 'National/State/County', 'State', 'state', 'County', 'lookup', 'Metric')], by = c('Date', 'lookup'))
-seas_table2$lookup <- NULL
-seas_table2$Metric <- paste(seas_table2$Metric, '(adj.)', sep = ' ')
-seas_table2 <- seas_table2 %>% rename(Value = V1)
-seas_tableW <- seas_table2 %>%
-  pivot_wider(names_from = Metric,
-              values_from = Value,
-              id_cols = c(Date, `National/State/County`, State, state, County)
-  )
+# dts <- data4
+# dts$lookup <- paste(dts$`National/State/County`, dts$state, dts$County, dts$Metric, sep = "_")
+# 
+# ts <- list()
+# for(i in unique(dts$lookup)){
+#   ts[[i]] <- ts(dts$Value[dts$lookup == i], frequency = 7)
+# }
+# 
+# seasons <- list()
+# for(i in unique(dts$lookup)){
+#   seasons[[i]]<- ets(ts[[i]]
+#   )
+# }
+# 
+# seasls <- list()
+# for(i in unique(dts$lookup)){
+#   seasls[[i]] <- data.table(seasons[[i]]$fitted)
+#   seasls[[i]]$Actual <- dts$Value[dts$lookup == i]
+#   seasls[[i]]$Date <- dts$Date[dts$lookup == i]
+#   seasls[[i]]$lookup <- dts$lookup[dts$lookup == i]
+# }
+# 
+# seas_table <- bind_rows(seasls[1:length(seasls)])
+# seas_table$V1 <- round(seas_table$V1, 0)
+# seas_table2 <- left_join(seas_table, dts[, c('Date', 'National/State/County', 'State', 'state', 'County', 'lookup', 'Metric')], by = c('Date', 'lookup'))
+# seas_table2$lookup <- NULL
+# seas_table2$Metric <- paste(seas_table2$Metric, '(adj.)', sep = ' ')
+# seas_table2 <- seas_table2 %>% rename(Value = V1)
+# seas_tableW <- seas_table2 %>%
+#   pivot_wider(names_from = Metric,
+#               values_from = Value,
+#               id_cols = c(Date, `National/State/County`, State, state, County)
+#   )
 
 # arima <- list()
 # for(i in unique(dts$lookup)){

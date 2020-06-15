@@ -9,7 +9,7 @@ library(shiny)
 rus <- GET("https://covidtracking.com/api/v1/us/daily.json")
 us <- fromJSON(rawToChar(rus$content))
 us <- setorder(us, date)
-us$granularity <- 'National'
+us$granularity <- 'Nation'
 us$state <- 'N/A'
 us$county <- 'N/A'
 
@@ -46,16 +46,16 @@ data2[, c('total_confirmed_cases', 'total_deaths')][is.na(data2[, c('total_confi
 abbrlkp <- read_csv('state_territory_lookup.csv')
 data3 <- left_join(data2, abbrlkp, by = 'state')
 
-names(data3) <- c('Date', 'National/State/County', 'state', 'County', 'fips', 'Last Update', 'Data Quality Grade', 'Total Cases', 'New Cases', 'Total Deaths', 'New Deaths', 'State')
+names(data3) <- c('Date', 'Nation/State/County', 'state', 'County', 'fips', 'Last Update', 'Data Quality Grade', 'Total Cases', 'New Cases', 'Total Deaths', 'New Deaths', 'State')
 
-data3 <- data3[, c(c('Date', 'National/State/County', 'State', 'state', 'County', 'fips', 'Last Update', 'Data Quality Grade', 'Total Cases', 'New Cases', 'Total Deaths', 'New Deaths'))]
+data3 <- data3[, c(c('Date', 'Nation/State/County', 'State', 'state', 'County', 'fips', 'Last Update', 'Data Quality Grade', 'Total Cases', 'New Cases', 'Total Deaths', 'New Deaths'))]
 
 data3$State[is.na(data3$State)] <- 'N/A'
 
 cases <- data3[, c(1:10)]
 cases2 <- cases[cases$`Total Cases` >= 2,]
 casesL <- cases2 %>%
-  pivot_longer(-c(Date, `National/State/County`, State, state, County, fips, `Last Update`, `Data Quality Grade`),
+  pivot_longer(-c(Date, `Nation/State/County`, State, state, County, fips, `Last Update`, `Data Quality Grade`),
                names_to = 'Metric',
                values_to = 'Value')
 
@@ -63,32 +63,14 @@ casesL <- cases2 %>%
 deaths <- data3[, c(1:8, 11, 12)]
 deaths2 <- deaths[deaths$`Total Deaths` >= 1,]
 deathsL <- deaths2 %>%
-  pivot_longer(-c(Date, `National/State/County`, State, state, County, fips, `Last Update`, `Data Quality Grade`),
+  pivot_longer(-c(Date, `Nation/State/County`, State, state, County, fips, `Last Update`, `Data Quality Grade`),
                names_to = 'Metric',
                values_to = 'Value')
 
-data4 <- bind_rows(casesL, deathsL)
-
-dataW <- left_join(data3, seas_tableW, by = c('Date', 'National/State/County', 'State', 'state', 'County'))
-dataL <- dataW %>%
-  pivot_longer(-c(Date, `National/State/County`, State, state, County, fips, `Last Update`, `Data Quality Grade`),
-                            names_to = 'Metric',
-                            values_to = 'Value')
-
-############## create metric pairs for actual and adjusted ---------------------
-dataL$MetricType <- ifelse(dataL$Metric == 'Total Cases (adj.)', 'Total Cases',
-                           ifelse(dataL$Metric == 'New Cases (adj.)', 'New Cases',
-                                  ifelse(dataL$Metric == 'Total Deaths (adj.)', 'Total Deaths',
-                                         ifelse(dataL$Metric == 'New Deaths (adj.)', 'New Deaths', dataL$Metric
-                                         )
-                                  )
-                           )
-)
-
-
+dataL <- bind_rows(casesL, deathsL)
 
 write_csv(county, 'ca_counties_daily.csv')
 write_csv(states, 'states_daily.csv')
-write_csv(us, 'National_daily.csv')
+write_csv(us, 'Nation_daily.csv')
 write_csv(data3, 'combined_state_county.csv')
-write_csv(dataW, 'combined_state_county_long_w_adj.csv')
+write_csv(dataL, 'combined_state_county_long_w_adj.csv')
