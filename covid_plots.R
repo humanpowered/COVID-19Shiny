@@ -14,7 +14,7 @@ library(hrbrthemes)
 library(openintro)
 source('C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/custom_theme2.R')
 
-dataL <- read_csv('combined_state_county_long_w_adj.csv')
+dataL <- readRDS('C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/COVID-19_Tracker/combined_long.rds')
 
 Granularity <- 'County'
 State <- 'California'
@@ -22,13 +22,36 @@ County <- 'Los Angeles'
 Metric <- 'New Cases'
 
 
-p <- data4[data4$`Nation/State/County` == Granularity & data4$State == State & data4$County == County & data4$Metric == Metric,] %>%
+p <- dataL[dataL$`Nation/State/County` == Granularity & dataL$State == State & dataL$County == County & dataL$Metric == Metric,] %>%
   ggplot( aes(x = Date, y = Value)) +
   geom_area(fill="#69b3a2", alpha=0.5) +
   geom_line(color="#69b3a2") +
   geom_smooth(method = "loess", formula = y ~ x, se = FALSE, colour = "#A269B3", alpha = 0.5, size = 0.5) +
   ylab(Metric) +
-  ylim(0, max(data4$Value[data4$`Nation/State/County` == Granularity & data4$State == State & data4$County == County & data4$Metric == Metric]) * 1.05) +
+  ylim(0, max(dataL$Value[dataL$`Nation/State/County` == Granularity & dataL$State == State & dataL$County == County & dataL$Metric == Metric]) * 1.05) +
   theme_Custom(); p <- ggplotly(p); p
 
+
+ ggplotly(dataL[dataL$`Nation/State/County` == Granularity & dataL$State == State & dataL$County == County & dataL$Metric == Metric,] %>%
+  ggplot( aes(x = Date, y = Value)) +
+  geom_area(fill="#69b3a2", alpha=0.5) +
+  geom_line(color="#69b3a2") +
+  geom_smooth(method = "loess", formula = y ~ x, se = FALSE, colour = "#A269B3", alpha = 0.5, size = 0.5) +
+  ylab(Metric) +
+  ylim(0, max(dataL$Value[dataL$`Nation/State/County` == Granularity & dataL$State == State & dataL$County == County & dataL$Metric == Metric]) * 1.05) +
+  theme_Custom())
+
+ 
+ df <- dataL[dataL$gran_num == 2 &
+              dataL$statenum == 6 &
+              dataL$countynum == 1 & dataL$metricnum == 1, ]
+ 
+ ggplotly(
+            ggplot(df, aes(x = Date, y = Value)) +
+            geom_area(fill="#69b3a2", alpha=0.5) +
+            geom_line(color="#69b3a2") +
+            geom_smooth(method = "loess", formula = y ~ x, se = FALSE, colour = "#A269B3", alpha = 0.5, size = 0.5) +
+            ylab(Metric) +
+            ylim(0, max(dataL$Value[dataL$`Nation/State/County` == Granularity & dataL$State == State & dataL$County == County & dataL$Metric == Metric]) * 1.05) +
+            theme_Custom())
 

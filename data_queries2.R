@@ -69,8 +69,13 @@ deathsL <- deaths2 %>%
 
 dataL <- bind_rows(casesL, deathsL)
 
+dataL$`Nation/State/County` <- gsub('County', 'County (California Only)', dataL$`Nation/State/County`, fixed = T)
+
 write_csv(county, 'ca_counties_daily.csv')
 write_csv(states, 'states_daily.csv')
 write_csv(us, 'Nation_daily.csv')
 write_csv(data3, 'combined_state_county.csv')
 write_csv(dataL, 'combined_state_county_long_w_adj.csv')
+
+saveRDS(dataL, 'C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/COVID-19_Tracker/combined_long.rds')
+saveRDS(dataL, 'C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/COVID_Tracker_1.0/combined_long.rds')
