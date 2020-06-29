@@ -3,11 +3,11 @@ library(mapproj)
 us_states <- map_data("state")
 national <- map_data('state')
 county_full <- map_data("county")
-county_ca <- county_full[county_full$region == 'california',]
+# county_ca <- county_full[county_full$region == 'california',]
 
-saveRDS(us_states, 'C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/COVID-19_Tracker/state_maps.rds')
-saveRDS(national, 'C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/COVID-19_Tracker/nation_map.rds')
-saveRDS(county_ca, 'C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/COVID-19_Tracker/ca_counties_maps.rds')
+saveRDS(us_states, 'C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/state_maps.rds')
+saveRDS(national, 'C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/nation_map.rds')
+saveRDS(county_full, 'C:/Users/craig/OneDrive/Documents/R Projects/COVID19Shiny/county_maps.rds')
 
 
 selection.fill <- c(
